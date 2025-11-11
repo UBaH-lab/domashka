@@ -1,13 +1,22 @@
-def sort_by_date(user_data, reverse=False):
-    sort_date = sorted(user_data, key=lambda data: data["date"], reverse=reverse)
-    return sort_date
+def sort_by_date(transactions, ascending=True):
+    """
+    Сортирует список транзакций по дате.
+    По умолчанию сортировка по возрастанию.
+    """
+    return sorted(transactions, key=lambda transaction: transaction["date"], reverse=not ascending)
 
-def filter_by_state(transactions):
-    new_list=[]
-    for x in transactions:
-             if x['state']=='EXECUTED':
-                 new_list.append(x)
-    print(new_list)
+def filter_by_state(transactions, state=None):
+    """
+    Фильтрует транзакции по состоянию.
+    Если 'state' не передан, возвращает все транзакции.
+    """
+    if state is None:
+        return transactions
+    filtered_transactions = []
+    for transaction in transactions:
+        if transaction['state'] == state:
+            filtered_transactions.append(transaction)
+    return filtered_transactions
 
 transactions = [{'id': 41428829, 'state': 'EXECUTED', 'date': '2019-07-03T18:35:29.512364'},
                 {'id': 939719570, 'state': 'EXECUTED', 'date': '2018-06-30T02:08:58.425572'},
