@@ -1,11 +1,11 @@
-def sort_by_date(transactions, ascending=True):
+def sort_by_date(transactions, ascending=True)->str:
     """
     Сортирует список транзакций по дате.
     По умолчанию сортировка по возрастанию.
     """
     return sorted(transactions, key=lambda transaction: transaction["date"], reverse=not ascending)
 
-def filter_by_state(transactions, state=None):
+def filter_by_state(transactions, state=None)->str:
     """
     Фильтрует транзакции по состоянию.
     Если 'state' не передан, возвращает все транзакции.
