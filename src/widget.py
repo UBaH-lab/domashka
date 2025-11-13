@@ -5,7 +5,7 @@ from datetime import datetime
 
 def mask_account_card(info_card: str) -> str:
   """Функция определяет счет это или номер карты и возвращает замаскированный"""
-  info_card_list = info_card.spl it()
+  info_card_list = info_card.split()
   if "Счет" in info_card_list:
     print(f"Счет **{info_card_list[-1][-4:]}")
   else:
