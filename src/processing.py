@@ -8,7 +8,7 @@ def sort_by_date(transactions, ascending=True)->str:
 def filter_by_state(transactions, state=None)->str:
     """
     Фильтрует транзакции по состоянию.
-    Если 'state' не передан, возвращает все транзакции.
+    Если 'state' не передаёт все транзакции.
     """
     if state is None:
         return transactions
