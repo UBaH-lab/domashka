@@ -4,7 +4,7 @@ import os
 # Добавляем путь к папке src, где находится модуль masks.py
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
 
-import masks  # импортируем весь модуль
+import masks # импортируем весь модуль
 
 def test_get_mask_card_number():
     # Стандартный номер (длина 16)

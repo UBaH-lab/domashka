@@ -1,19 +1,18 @@
-
-import masks
-from src.masks import get_mask_card_number
+import pytest
 from datetime import datetime
 
 
+
 def mask_account_card(info_card: str) -> str:
-  """Функция определяет счет это или номер карты и возвращает замаскированный"""
+  """Функция определяет счет это или номер карты и возвращает замаскированную строку."""
   info_card_list = info_card.split()
   if "Счет" in info_card_list:
-    print(f"Счет **{info_c
-    fard_list[-1][-4:]}")
+    # Возвращаем строку с частью номер счета
+    return f"Счет **{info_card_list[-1][-4:]}"
   else:
     card_name = ' '.join(info_card_list[:-1])
     card_number = info_card_list[-1].replace(' ', '')
-    print(f"{card_name} {get_mask_card_number(card_number)}")
+    return f"{card_name} {get_mask_card_number(card_number)}"
 
 card_type_and_number = "Visa Gold 5999414228426353"
 mask_account_card(card_type_and_number)
