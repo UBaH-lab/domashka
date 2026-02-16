@@ -2,10 +2,11 @@ import sys
 import os
 import pytest
 
+
 # Добавляем путь к папке src, где находится модуль masks.py
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
 
-import masks  # импортируем весь модуль
+
 
 
 @pytest.mark.parametrize(
@@ -41,3 +42,4 @@ if __name__ == "__main__":
     # Запускаем pytest программно (если хотите)
     import pytest
     pytest.main([os.path.abspath(__file__)])
+

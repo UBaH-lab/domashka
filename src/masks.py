@@ -17,6 +17,7 @@ def get_mask_card_number(card_number: str) -> str:
     else:
         return card_number
 
+
 def get_mask_account(account_number: str) -> str:
     """
     Маскирует номер счёта, показывая только последние 4 цифры,
