@@ -4,7 +4,7 @@ from widget import mask_account_card, get_date
 
 # Фикстура для подготовки входной строки для тестов mask_account_card
 @pytest.fixture
-def input_str_mask(request): # Получаем текущий параметр из request.param
+def input_str_mask(request):  # Получаем текущий параметр из request.param
 
     return request.param  # Пока просто возвращаем без изменений
 

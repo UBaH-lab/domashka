@@ -1,12 +1,11 @@
 
+from processing import sort_by_date, filter_by_state
 import sys
 import os
 import pytest
 
 # Добавляем путь до папки src
 sys.path.insert(0, os.path.abspath(r"C:\Users\Ivan\PycharmProjects\PythonProject19\src"))
-
-from processing import sort_by_date, filter_by_state
 
 
 @pytest.fixture

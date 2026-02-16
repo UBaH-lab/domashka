@@ -1,3 +1,4 @@
+import masks  # импортируем сюда, чтобы потом передавать в фикстуру
 import sys
 import os
 import pytest
@@ -5,7 +6,6 @@ import pytest
 # Добавляем путь к папке src, где находится модуль masks.py
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
 
-import masks  # импортируем сюда, чтобы потом передавать в фикстуру
 
 @pytest.fixture
 def masks_module():
