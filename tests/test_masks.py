@@ -2,11 +2,15 @@ import sys
 import os
 import pytest
 
-
 # Добавляем путь к папке src, где находится модуль masks.py
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
 
+import masks  # импортируем сюда, чтобы потом передавать в фикстуру
 
+@pytest.fixture
+def masks_module():
+    # возвращаем модуль для использования в тестах
+    return masks
 
 
 @pytest.mark.parametrize(
@@ -20,8 +24,8 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../s
         (1234567890, ""),                           # не строка int
     ]
 )
-def test_get_mask_card_number(input_value, expected):
-    assert masks.get_mask_card_number(input_value) == expected
+def test_get_mask_card_number(masks_module, input_value, expected):
+    assert masks_module.get_mask_card_number(input_value) == expected
 
 
 @pytest.mark.parametrize(
@@ -34,12 +38,10 @@ def test_get_mask_card_number(input_value, expected):
         (12345, ""),               # не строка int
     ]
 )
-def test_get_mask_account(input_value, expected):
-    assert masks.get_mask_account(input_value) == expected
+def test_get_mask_account(masks_module, input_value, expected):
+    assert masks_module.get_mask_account(input_value) == expected
 
 
 if __name__ == "__main__":
-    # Запускаем pytest программно (если хотите)
-    import pytest
+    # Запуск тестов программно
     pytest.main([os.path.abspath(__file__)])
-
