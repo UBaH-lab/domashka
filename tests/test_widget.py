@@ -1,5 +1,5 @@
 import pytest
-from widget import mask_account_card, get_date
+from src.widget import mask_account_card, get_date
 
 
 # Фикстура для подготовки входной строки для тестов mask_account_card
