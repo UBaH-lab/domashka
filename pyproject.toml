@@ -30,3 +30,5 @@ no_implicit_optional = true
 warn_return_any = true
 exclude = 'venv'
 files = ["src/widget.py", "src/masks.py"]
+
+
