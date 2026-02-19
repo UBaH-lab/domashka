@@ -1,16 +1,18 @@
 import sys
 import os
+import pytest
+from typing import Any
 
 src_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../src"))
-
 if src_path not in sys.path:
     sys.path.insert(0, src_path)
 
-import masks
 
-# Далее тесты
-import pytest
-from typing import Any
+@pytest.fixture(scope="module")
+def masks_funcs():
+    from masks import get_mask_card_number, get_mask_account
+
+    return get_mask_card_number, get_mask_account
 
 
 @pytest.mark.parametrize(
@@ -24,8 +26,9 @@ from typing import Any
         (1234567890, ""),
     ],
 )
-def test_get_mask_card_number(input_value: Any, expected: str) -> None:
-    assert masks.get_mask_card_number(input_value) == expected
+def test_get_mask_card_number(input_value: Any, expected: str, masks_funcs):
+    get_mask_card_number, _ = masks_funcs
+    assert get_mask_card_number(input_value) == expected
 
 
 @pytest.mark.parametrize(
@@ -38,8 +41,9 @@ def test_get_mask_card_number(input_value: Any, expected: str) -> None:
         (12345, ""),
     ],
 )
-def test_get_mask_account(input_value: Any, expected: str) -> None:
-    assert masks.get_mask_account(input_value) == expected
+def test_get_mask_account(input_value: Any, expected: str, masks_funcs):
+    _, get_mask_account = masks_funcs
+    assert get_mask_account(input_value) == expected
 
 
 if __name__ == "__main__":
