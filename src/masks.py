@@ -1,6 +1,7 @@
 import re
 from datetime import datetime
 
+
 def mask_account_card(text: str) -> str:
     """
     Маскирует текст, содержащий номер карты или счёт.
@@ -24,9 +25,9 @@ def mask_account_card(text: str) -> str:
     if not m:
         return text  # нет цифр
 
-    prefix_with_space = text[:m.start()]  # может включать пробел после префикса
+    prefix_with_space = text[: m.start()]  # может включать пробел после префикса
 
-    digits_only = re.sub(r"\D", "", text[m.start():])
+    digits_only = re.sub(r"\D", "", text[m.start() :])
     if not digits_only:
         return text
 

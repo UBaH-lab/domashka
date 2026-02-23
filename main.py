@@ -1,4 +1,3 @@
-from src import masks
 from src.masks import get_mask_card_number
 
 if __name__ == "__main__":

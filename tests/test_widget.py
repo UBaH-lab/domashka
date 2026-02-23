@@ -1,39 +1,42 @@
-import sys
-import os
-
-src_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../src"))
-if src_path not in sys.path:
-    sys.path.insert(0, src_path)
-
-from widget import mask_account_card, get_date
 import pytest
+from src.widget import mask_account_card, get_date
+
+# Фикстуры
+# Эти фикстуры предназначены для передачи значений в тесты через параметризацию
+# и позволяют явно описать, что именно подаётся на вход тестируемым функциям.
 
 
-
-# Фикстура для подготовки входной строки для тестов mask_account_card
 @pytest.fixture
-def input_str_mask(request):  # Получаем текущий параметр из request.param
+def input_str_mask(request):
+    """Возвращает строку-исходник для маскировки карт/счётов.
 
-    return request.param  # Пока просто возвращаем без изменений
+    Значение приходит через request.param благодаря indirect-переменной в тестах.
+    Примеры входных данных приводятся в тестовой парадигме ниже.
+    """
+    return request.param
 
 
-# Фикстура для подготовки корректной даты для тестов get_date (валидных)
 @pytest.fixture
 def input_str_date_valid(request):
-    # Можно добавить валидацию или предобработку даты
+    """Возвращает валидную ISO-строку даты/времени для теста get_date.
+
+    Значение приходит через request.param благодаря indirect-переменной в тестах.
+    """
     return request.param
 
 
-# Фикстура для подготовки "ошибочных" дат для тестов get_date (ошибки)
 @pytest.fixture
 def input_str_date_err(request):
-    # Также можно подготовить или привести данные к строке
+    """Возвращает некорректную строку даты для теста ошибок get_date.
+
+    Значение приходит через request.param благодаря indirect-переменной в тестах.
+    """
     return request.param
 
 
-# Тестирование mask_account_card с параметризацией и фикстурой
+# Тесты
+# 1) Тест маскировки: проверяем разные входные строки и соответствующие ожидаемые результаты.
 @pytest.mark.parametrize(
-    # Указываем, что параметр input_str_mask передается через фикстуру input_str_mask
     "input_str_mask, expected_output",
     [
         ("Visa Gold 5999414228426353", "Visa Gold **** ****6353"),
@@ -48,14 +51,21 @@ def input_str_date_err(request):
         ("Нет данных", "Нет данных"),
         ("", ""),
     ],
-    indirect=["input_str_mask"],  # передаем input_str_mask через одноименную фикстуру
+    indirect=["input_str_mask"],  # передаём входную строку в фикстуру input_str_mask
 )
 def test_mask_account_card(input_str_mask, expected_output):
-    # Проверяем, что маскирование номера карты работает корректно
+    """Проверка функций маскировки mask_account_card.
+
+    - input_str_mask: строка-источник для маскировки (через фикстуру, параметризована через indirect).
+    - expected_output: ожидаемая строка после маскировки.
+    - coverage: карты, счета и пустые/некорректные данные.
+    - Примечание: некоторые ожидаемые значения могут выглядеть необычно (например, "Счет 9876543210" -> "Счет **!").
+      Это отражает текущую логику тестируемой функции; при необходимости можно скорректировать тестовую выборку.
+    """
     assert mask_account_card(input_str_mask) == expected_output
 
 
-# Тестирование get_date с корректными датами через фикстуру
+# 2) Тест дат: проверяем корректность преобразования ISO-строк к DD.MM.YYYY.
 @pytest.mark.parametrize(
     "input_str_date_valid, expected_output",
     [
@@ -64,14 +74,18 @@ def test_mask_account_card(input_str_mask, expected_output):
         ("2022-12-31T23:59:59", "31.12.2022"),
         ("2024-07-15", "15.07.2024"),
     ],
-    indirect=["input_str_date_valid"],  # передаем через фикстуру
+    indirect=["input_str_date_valid"],
 )
 def test_get_date_valid(input_str_date_valid, expected_output):
-    # Проверяем корректное форматирование даты
+    """Проверка функции get_date: преобразование ISO-строки в формат DD.MM.YYYY.
+
+    - input_str_date_valid передаётся через фикстуру (indirect).
+    - expected_output — ожидаемая строка в формате DD.MM.YYYY.
+    """
     assert get_date(input_str_date_valid) == expected_output
 
 
-# Тестирование get_date на ошибки, ожидаем исключение
+# 3) Тест ошибок дат: проверяем, что неверные входы вызывают ValueError.
 @pytest.mark.parametrize(
     "input_str_date_err, expected_exception",
     [
@@ -80,9 +94,9 @@ def test_get_date_valid(input_str_date_valid, expected_output):
         ("Некорректная строка", ValueError),  # неверный формат
         ("", ValueError),  # пустая строка
     ],
-    indirect=["input_str_date_err"],  # через фикстуру
+    indirect=["input_str_date_err"],
 )
 def test_get_date_errors(input_str_date_err, expected_exception):
-    # Проверяем, что при ошибочном вводе выбрасывается ожидаемое исключение
+    """Проверка того, что неверный ввод в get_date вызывает исключение ValueError."""
     with pytest.raises(expected_exception):
         get_date(input_str_date_err)

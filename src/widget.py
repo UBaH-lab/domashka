@@ -1,6 +1,7 @@
 from datetime import datetime
 import re
 
+
 def mask_account_card(info_card: str) -> str:
     """
     Маскирует номер карты или счёт согласно ожиданиям теста.
@@ -21,7 +22,7 @@ def mask_account_card(info_card: str) -> str:
         return info_card
     prefix = m.group(1).strip()
 
-    digits = ''.join(ch for ch in info_card if ch.isdigit())
+    digits = "".join(ch for ch in info_card if ch.isdigit())
     if not digits:
         return info_card
 
@@ -37,6 +38,7 @@ def mask_account_card(info_card: str) -> str:
             # Для невалидной длины лучше вернуть исходную строку
             return info_card
 
+
 def get_date(date_inp: str) -> str:
     """
     Преобразование даты в формат DD.MM.YYYY.
@@ -48,6 +50,7 @@ def get_date(date_inp: str) -> str:
     date_str = date_inp[:10]
     date = datetime.strptime(date_str, "%Y-%m-%d")
     return f"{date.day:02}.{date.month:02}.{date.year}"
+
 
 def get_mask_card_number(card_number: str) -> str:
     """

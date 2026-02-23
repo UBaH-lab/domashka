@@ -1,6 +1,7 @@
 from typing import Any, Dict, List, Optional
 from datetime import datetime
 
+
 def _parse_date(date_str: str) -> datetime:
     """
     Преобразование даты из строки в datetime.
@@ -25,19 +26,23 @@ def _parse_date(date_str: str) -> datetime:
 
     raise ValueError(f"Invalid date format: {date_str}")
 
-def sort_by_date(transactions: List[Dict[str, Any]], ascending: bool = True) -> List[Dict[str, Any]]:
+
+def sort_by_date(
+    transactions: List[Dict[str, Any]], ascending: bool = True
+) -> List[Dict[str, Any]]:
     """
     Возвращает новый список транзакций, отсортированный по полю 'date'.
     - ascending True: oldest first
     - ascending False: newest first
     """
     return sorted(
-        transactions,
-        key=lambda t: _parse_date(t["date"]),
-        reverse=not ascending
+        transactions, key=lambda t: _parse_date(t["date"]), reverse=not ascending
     )
 
-def filter_by_state(transactions: List[Dict[str, Any]], state: Optional[str]) -> List[Dict[str, Any]]:
+
+def filter_by_state(
+    transactions: List[Dict[str, Any]], state: Optional[str]
+) -> List[Dict[str, Any]]:
     """
     Фильтрует транзакции по полю 'state'.
     - state is None: вернуть копию исходного списка
