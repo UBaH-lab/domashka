@@ -1,5 +1,13 @@
+import sys
+import os
+
+src_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../src"))
+if src_path not in sys.path:
+    sys.path.insert(0, src_path)
+
+from widget import mask_account_card, get_date
 import pytest
-from src.widget import mask_account_card, get_date
+
 
 
 # Фикстура для подготовки входной строки для тестов mask_account_card

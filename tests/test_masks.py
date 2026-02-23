@@ -1,50 +1,49 @@
-import sys
-import os
 import pytest
-from typing import Any
-
-src_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../src"))
-if src_path not in sys.path:
-    sys.path.insert(0, src_path)
-
-
-@pytest.fixture(scope="module")
-def masks_funcs():
-    from masks import get_mask_card_number, get_mask_account
-
-    return get_mask_card_number, get_mask_account
+from src.masks import mask_account_card, get_date
 
 
 @pytest.mark.parametrize(
-    "input_value,expected",
+    "input_str_mask, expected_output",
     [
-        ("7000792289606361", "700079** ****6361"),
-        ("1234567890", "1234567890"),
-        ("12345678901234", "123456** ****1234"),
-        ("12345", "12345"),
-        (None, ""),
-        (1234567890, ""),
+        ("Visa Gold 5999414228426353", "Visa Gold **** ****6353"),
+        (
+            "Mastercard Platinum 1234 5678 9876 5432",
+            "Mastercard Platinum **** ****5432",
+        ),
+        ("Мастеркард 1111222233334444", "Мастеркард **** ****4444"),
+        ("Счет 1234567890123456", "Счет **3456"),
+        ("Счет 123", "Счет **123"),
+        ("Счет 9876543210", "Счет **3210"),
+        ("Нет данных", "Нет данных"),
+        ("", ""),
     ],
 )
-def test_get_mask_card_number(input_value: Any, expected: str, masks_funcs):
-    get_mask_card_number, _ = masks_funcs
-    assert get_mask_card_number(input_value) == expected
+def test_mask_account_card(input_str_mask, expected_output):
+    assert mask_account_card(input_str_mask) == expected_output
 
 
 @pytest.mark.parametrize(
-    "input_value,expected",
+    "input_str_date_valid, expected_output",
     [
-        ("1234567890", "**7890"),
-        ("123", "**123"),
-        ("", "**"),
-        (None, ""),
-        (12345, ""),
+        ("2024-03-11T02:26:18.671407", "11.03.2024"),
+        ("2020-01-01T00:00:00.000000", "01.01.2020"),
+        ("2022-12-31T23:59:59", "31.12.2022"),
+        ("2024-07-15", "15.07.2024"),
     ],
 )
-def test_get_mask_account(input_value: Any, expected: str, masks_funcs):
-    _, get_mask_account = masks_funcs
-    assert get_mask_account(input_value) == expected
+def test_get_date_valid(input_str_date_valid, expected_output):
+    assert get_date(input_str_date_valid) == expected_output
 
 
-if __name__ == "__main__":
-    pytest.main([os.path.abspath(__file__)])
+@pytest.mark.parametrize(
+    "input_str_date_err, expected_exception",
+    [
+        ("2024-13-01T00:00:00", ValueError),
+        ("2024-02-30T00:00:00", ValueError),
+        ("Некорректная строка", ValueError),
+        ("", ValueError),
+    ],
+)
+def test_get_date_errors(input_str_date_err, expected_exception):
+    with pytest.raises(expected_exception):
+        get_date(input_str_date_err)

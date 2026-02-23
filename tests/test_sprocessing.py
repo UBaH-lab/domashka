@@ -1,12 +1,7 @@
-from src.processing import sort_by_date, filter_by_state
-import sys
-import os
 import pytest
+from typing import Any
 
-# Добавляем путь до папки src
-sys.path.insert(
-    0, os.path.abspath(r"C:\Users\Ivan\PycharmProjects\PythonProject19\src")
-)
+from src.processing import sort_by_date, filter_by_state
 
 
 @pytest.fixture
@@ -47,6 +42,4 @@ def test_sort_by_date(transactions, ascending, expected_order):
 
 
 if __name__ == "__main__":
-    import pytest
-
-    pytest.main([os.path.abspath(__file__)])
+    pytest.main([__file__])
