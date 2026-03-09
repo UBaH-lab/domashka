@@ -1,13 +1,16 @@
 from typing import Callable, Any, Optional
 import functools
 
-def log(filename: Optional[str] = None) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
-    """Декоратор логирования:
-       - пишет "<func> started" перед вызовом
-       - при успехе пишет "<func> ok" и "<func> result: ..."
 
-       - при исключении пишет "<func> error: <ExceptionName>. Inputs: ..."
-       Логи либо в указанный файл, либо в консоль (stdout) если filename не задан.
+def log(
+    filename: Optional[str] = None,
+) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
+    """Декоратор логирования:
+    - пишет "<func> started" перед вызовом
+    - при успехе пишет "<func> ok" и "<func> result: ..."
+
+    - при исключении пишет "<func> error: <ExceptionName>. Inputs: ..."
+    Логи либо в указанный файл, либо в консоль (stdout) если filename не задан.
     """
 
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
@@ -60,5 +63,3 @@ def log(filename: Optional[str] = None) -> Callable[[Callable[..., Any]], Callab
         return wrapper
 
     return decorator
-
-
