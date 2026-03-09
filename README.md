@@ -248,6 +248,115 @@ for card in generators.card_number_generator(1, 3):
     print(card)
 ```
     
+## Декораторы проекта
+
+В проекте использован простой декоратор логирования, который позволяет фиксировать старт вызова функции, успешное завершение и ошибки. Декоратор опционально может писать логи в файл, либо выводить их в консоль.
+
+- Расположение кода: src/decorators/log.py
+- Сигнатура: `log(filename: Optional[str] = None) -> Callable[[Callable[..., Any]], Callable[..., Any]]`
+
+Особенности:
+- Логируется начало выполнения функции: `<func_name> started`
+- При удаче: `<func_name> ok`
+- При исключении: `<func_name> error: <ExceptionName>. Inputs: <args>, <kwargs>`
+- Если указан `filename` — логи пишутся в файл, иначе в консоль
+- Исключения повторно возбуждаются после логирования
+
+Пример использования:
+```python
+from src.decorators import log
+
+@log(filename="logs.txt")
+def transfer_funds(amount, to_account):
+    # логика перевода
+    return True
+
+transfer_funds(100, "ACC12345")
+```
+Что будет в логах:
+
+В консоль:
+"transfer_funds started"
+"transfer_funds ok"
+В файл logs.txt (пошагово):
+"transfer_funds started"
+"transfer_funds ok"
+Пример реализации (фрагмент кода для наглядности):
+
+```python
+# src/decorators/log.py
+# -*- coding: utf-8 -*-
+from typing import Callable, Any, Optional
+import functools
+
+def log(filename: Optional[str] = None) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
+
+```
+
+
+Параметры:
+    - filename: путь к файлу для логов. Если не указан, логи выводятся в консоль.
+
+```python
+    def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
+        @functools.wraps(func)
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
+            start_line = f"{func.__name__} started"
+            if filename:
+                with open(filename, "a", encoding="utf-8") as fh:
+                    fh.write(start_line + "\n")
+            else:
+                print(start_line)
+
+            try:
+                result = func(*args, **kwargs)
+                ok_line = f"{func.__name__} ok"
+                if filename:
+                    with open(filename, "a", encoding="utf-8") as fh:
+                        fh.write(ok_line + "\n")
+                else:
+                    print(ok_line)
+                return result
+            except Exception as exc:
+                err_line = f"{func.__name__} error: {exc.__class__.__name__}. Inputs: {args}, {kwargs}"
+                if filename:
+                    with open(filename, "a", encoding="utf-8") as fh:
+                        fh.write(err_line + "\n")
+                else:
+                    print(err_line)
+                raise
+        return wrapper
+    return decorator
+    
+```
+    
+Тестирование декоратора (пример, чтобы понять, как покрывать тестами):
+
+```python
+import pytest
+from src.decorators import log
+
+def test_log_to_console_success(capsys):
+    @log()
+    def func(a, b):  # лог в консоль
+        return a + b
+    assert func(1, 2) == 3
+    captured = capsys.readouterr()
+    assert "func started" in captured.out
+    assert "func ok" in captured.out
+
+def test_log_to_file_success(tmp_path):
+    log_file = tmp_path / "log.txt"
+
+    @log(filename=str(log_file))
+    def func(a, b):
+        return a + b
+
+    assert func(1, 2) == 3
+    content = log_file.read_text(encoding="utf-8")
+    assert "func started" in content
+    assert "func ok" in content
+ ```
 
 Добавляйте новые кейсы в параметризованные тесты, следуя существующей структуре и описаниям.
 Лицензия и контакты
