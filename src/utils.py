@@ -6,38 +6,43 @@
   Читает файл JSON по заданному пути и возвращает список словарей с данными
   о финансовых операциях. Если файл не найден, содержит неверный JSON или
   не является списком — возвращает пустой список.
-
-Пример использования:
-data = read_transactions_json("data/operations.json")
 """
 
 from typing import List, Dict, Any
 import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def read_transactions_json(path: str) -> List[Dict[str, Any]]:
     """Прочитать JSON-файл с операциями и вернуть список словарей.
 
     Параметры:
-    - path: строка, путь к JSON-файлу, который должен содержать список объектов
-      словарей с данными о финансовых операциях.
+    - path: строка, путь к JSON-файлу
 
     Возвращает:
     - list[dict]: список словарей, если содержимое файла является списком.
-    - пустой список: если файл не найден, пустой, не является списком
-      или содержит неверный JSON.
-
-    Примечания:
-    - Если JSON валиден, но верхний уровень не является списком, возвращается [].
-    - Исключения внутри чтения обрабатываются и приводят к возвращению [].
+    - пустой список: если файл не найден, пустой или содержит неверный JSON.
     """
+    logger.info(f"Попытка чтения файла: {path}")
+
     try:
         with open(path, "r", encoding="utf-8") as f:
             data = json.load(f)
-    except (FileNotFoundError, json.JSONDecodeError):
+    except FileNotFoundError:
+        logger.warning(f"Файл не найден: {path}")
+        return []
+    except json.JSONDecodeError as e:
+        logger.error(f"Ошибка парсинга JSON в файле {path}: {e}")
         return []
 
-    return data if isinstance(data, list) else []
+    if not isinstance(data, list):
+        logger.warning(f"Файл {path} не содержит список на верхнем уровне")
+        return []
+
+    logger.info(f"Успешно прочитано {len(data)} операций из {path}")
+    return data
 
 
 __all__ = ["read_transactions_json"]

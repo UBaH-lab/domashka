@@ -1,55 +1,63 @@
-import re
+"""
+Модуль masks содержит функции для маскирования номера карты/счета и
+преобразования даты в удобочитаемый формат.
+"""
+
 from datetime import datetime
+import re
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def mask_account_card(text: str) -> str:
     """
     Маскирует текст, содержащий номер карты или счёт.
+
     Правила:
-    - Карты: префикс до первой цифры сохраняется, затем "**** ****" и последние 4 цифры.
-      Примеры:
-        "Visa Gold 5999414228426353" -> "Visa Gold **** ****6353"
-        "Mastercard Platinum 1234 5678 9876 5432" -> "Mastercard Platinum **** ****5432"
-        "Мастеркард 1111222233334444" -> "Мастеркард **** ****4444"
-    - Счета (начинается с "Счет"): префикс + "**" + последние 4 цифры (или меньше, если нет 4 цифр)
-      Примеры:
-        "Счет 1234567890123456" -> "Счет **3456"
-        "Счет 123" -> "Счет **123"
-        "Счет 9876543210" -> "Счет **3210"
-    - Если цифр в строке нет, возвращаем исходную строку.
+    - Карты: префикс + "**** ****" + последние 4 цифры
+    - Счета: префикс + "**" + последние 4 цифры
+    - Если цифр нет, возвращает исходную строку.
     """
+    logger.debug(f"Маскирование: {text}")
+
     if not isinstance(text, str) or text == "":
+        logger.warning("Пустой или некорректный ввод для маскирования")
         return text
 
     m = re.search(r"\d", text)
     if not m:
-        return text  # нет цифр
+        logger.debug("В тексте нет цифр, возврат исходной строки")
+        return text
 
-    prefix_with_space = text[: m.start()]  # может включать пробел после префикса
-
+    prefix_with_space = text[: m.start()]
     digits_only = re.sub(r"\D", "", text[m.start() :])
+
     if not digits_only:
+        logger.warning("Не найдены цифры после извлечения")
         return text
 
     last = digits_only[-4:] if len(digits_only) >= 4 else digits_only
 
     if text.strip().startswith("Счет"):
-        return prefix_with_space + "**" + last
+        result = prefix_with_space + "**" + last
+        logger.info(f"Маскировка счёта: {text} -> {result}")
+        return result
 
-    return prefix_with_space + "**** ****" + last
+    result = prefix_with_space + "**** ****" + last
+    logger.info(f"Маскировка карты: {text} -> {result}")
+    return result
 
 
 def get_date(text: str) -> str:
     """
     Преобразует дату в формате ISO-like в строку DD.MM.YYYY.
-    Поддерживает:
-      - 2024-03-11T02:26:18.671407
-      - 2020-01-01T00:00:00.000000
-      - 2022-12-31T23:59:59
-      - 2024-07-15
     При неверном формате возбуждает ValueError.
     """
+    logger.debug(f"Преобразование даты: {text}")
+
     if not isinstance(text, str):
+        logger.error("Дата должна быть строкой")
         raise ValueError("Date must be a string")
 
     formats = [
@@ -61,8 +69,19 @@ def get_date(text: str) -> str:
     for fmt in formats:
         try:
             dt = datetime.strptime(text, fmt)
-            return dt.strftime("%d.%m.%Y")
+            result = dt.strftime("%d.%m.%Y")
+            logger.info(f"Преобразование даты: {text} -> {result}")
+            return result
         except ValueError:
             continue
 
+    logger.error(f"Неверный формат даты: {text}")
     raise ValueError("Invalid date format")
+
+
+__all__ = ["mask_account_card", "get_date"]
+
+__all__ = ["mask_account_card", "get_date", "get_mask_card_number"]  # добавляем alias
+
+# Добавляем псевдоним для совместимости
+get_mask_card_number = mask_account_card
