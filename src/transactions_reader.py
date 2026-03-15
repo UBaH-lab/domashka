@@ -1,8 +1,9 @@
 """Модуль для чтения финансовых транзакций из CSV и Excel файлов."""
 
-from typing import List, Dict, Any, Union
-import pandas as pd
 from pathlib import Path
+from typing import Any, Dict, List, Union
+
+import pandas as pd
 
 
 def read_transactions_csv(file_path: Union[str, Path]) -> List[Dict[str, Any]]:

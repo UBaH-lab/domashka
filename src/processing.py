@@ -1,5 +1,5 @@
-from typing import Any, Dict, List, Optional
 from datetime import datetime
+from typing import Any, Dict, List, Optional
 
 
 def _parse_date(date_str: str) -> datetime:

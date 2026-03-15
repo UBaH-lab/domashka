@@ -2,10 +2,11 @@
 Скрипт для проверки работы логирования.
 """
 
-from masks import mask_account_card, get_date
-from utils import read_transactions_json
 import json
 from pathlib import Path
+
+from masks import get_date, mask_account_card
+from utils import read_transactions_json
 
 
 def main():

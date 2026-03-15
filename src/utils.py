@@ -8,9 +8,9 @@
   не является списком — возвращает пустой список.
 """
 
-from typing import List, Dict, Any
 import json
 import logging
+from typing import Any, Dict, List
 
 logger = logging.getLogger(__name__)
 

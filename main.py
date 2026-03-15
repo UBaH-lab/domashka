@@ -1,6 +1,7 @@
 """Модуль для тестирования маскирования номера карты."""
 
 import logging
+
 from src.masks import get_mask_card_number
 
 # Настройка логирования с записью в файл

@@ -1,5 +1,6 @@
 import pytest
-from src.widget import mask_account_card, get_date
+
+from src.widget import get_date, mask_account_card
 
 # Фикстуры
 # Эти фикстуры предназначены для передачи значений в тесты через параметризацию

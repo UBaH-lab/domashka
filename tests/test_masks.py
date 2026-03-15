@@ -1,5 +1,6 @@
 import pytest
-from src.masks import mask_account_card, get_date
+
+from src.masks import get_date, mask_account_card
 
 # Описание тестов:
 # - test_mask_account_card проверяет маскирование для карт и счетов.

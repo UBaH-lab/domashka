@@ -22,8 +22,9 @@
   Результат возвращается как float.
 """
 
-from typing import Dict, Any
 import os
+from typing import Any, Dict
+
 import requests
 
 

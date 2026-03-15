@@ -1,4 +1,4 @@
-from typing import List, Dict, Generator
+from typing import Dict, Generator, List
 
 
 def filter_by_currency(

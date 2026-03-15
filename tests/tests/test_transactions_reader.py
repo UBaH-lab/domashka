@@ -1,12 +1,14 @@
 """Тесты для модуля чтения транзакций."""
 
-import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+
 import pandas as pd
+import pytest
+
 from src.transactions_reader import (
+    read_transactions,
     read_transactions_csv,
     read_transactions_excel,
-    read_transactions,
 )
 
 
