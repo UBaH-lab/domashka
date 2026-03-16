@@ -2,23 +2,21 @@
 
 from pathlib import Path
 from typing import Any, Dict, List, Union
-
 import pandas as pd
 
 
 def read_transactions_csv(file_path: Union[str, Path]) -> List[Dict[str, Any]]:
-    """
-    Считывает финансовые транзакции из CSV-файла.
+    """Считывает финансовые транзакции из CSV-файла.
 
     Args:
-        file_path: Путь к CSV-файлу
+        file_path (Union[str, Path]): Путь к CSV-файлу.
 
     Returns:
-        Список словарей с данными транзакций
+        List[Dict[str, Any]]: Список записей транзакций, где каждая запись — словарь.
 
     Raises:
-        FileNotFoundError: Если файл не существует
-        ValueError: Если файл пустой или имеет неверный формат
+        FileNotFoundError: Если файл не существует.
+        ValueError: Если файл пустой или имеет неверный формат.
     """
     path = Path(file_path)
 
@@ -42,18 +40,17 @@ def read_transactions_csv(file_path: Union[str, Path]) -> List[Dict[str, Any]]:
 
 
 def read_transactions_excel(file_path: Union[str, Path]) -> List[Dict[str, Any]]:
-    """
-    Считывает финансовые транзакции из XLSX-файла.
+    """Считывает финансовые транзакции из XLSX-файла.
 
     Args:
-        file_path: Путь к XLSX-файлу
+        file_path (Union[str, Path]): Путь к XLSX-файлу.
 
     Returns:
-        Список словарей с данными транзакций
+        List[Dict[str, Any]]: Список записей транзакций, где каждая запись — словарь.
 
     Raises:
-        FileNotFoundError: Если файл не существует
-        ValueError: Если файл пустой или имеет неверный формат
+        FileNotFoundError: Если файл не существует.
+        ValueError: Если файл пустой или имеет неверный формат.
     """
     path = Path(file_path)
 
@@ -75,18 +72,17 @@ def read_transactions_excel(file_path: Union[str, Path]) -> List[Dict[str, Any]]
 
 
 def read_transactions(file_path: Union[str, Path]) -> List[Dict[str, Any]]:
-    """
-    Универсальная функция для чтения транзакций из файла.
+    """Универсальная функция для чтения транзакций из файла.
     Автоматически определяет формат по расширению файла.
 
     Args:
-        file_path: Путь к файлу (CSV или XLSX)
+        file_path (Union[str, Path]): Путь к файлу (CSV или XLSX).
 
     Returns:
-        Список словарей с данными транзакций
+        List[Dict[str, Any]]: Список записей транзакций.
 
     Raises:
-        ValueError: Если формат файла не поддерживается
+        ValueError: Если формат файла не поддерживается.
     """
     path = Path(file_path)
     extension = path.suffix.lower()

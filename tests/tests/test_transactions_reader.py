@@ -1,15 +1,19 @@
-"""Тесты для модуля чтения транзакций."""
-
 from unittest.mock import MagicMock, patch
-
 import pandas as pd
 import pytest
-
 from src.transactions_reader import (
     read_transactions,
     read_transactions_csv,
     read_transactions_excel,
 )
+
+
+"""Тесты для модуля чтения транзакций."""
+
+"""Тесты для модуля чтения финансовых транзакций.
+Этот набор тестов проверяет чтение CSV и XLSX файлов, а также
+универсальную функцию read_transactions, которая определяет формат по расширению.
+"""
 
 
 class TestReadTransactionsCSV:
@@ -24,7 +28,6 @@ class TestReadTransactionsCSV:
         mock_path_instance.exists.return_value = True
         mock_path.return_value = mock_path_instance
 
-        # Создаём тестовый DataFrame
         test_data = pd.DataFrame(
             {
                 "id": [1, 2, 3],
@@ -35,16 +38,12 @@ class TestReadTransactionsCSV:
         )
         mock_read_csv.return_value = test_data
 
-        # Вызываем функцию
         transactions = read_transactions_csv("test.csv")
 
-        # Проверяем результат
         assert len(transactions) == 3
         assert transactions[0]["id"] == 1
         assert transactions[0]["amount"] == 100.0
         assert transactions[0]["category"] == "food"
-
-        # Проверяем, что read_csv был вызван с правильным аргументом
         mock_read_csv.assert_called_once()
 
     @patch("src.transactions_reader.Path")
@@ -111,7 +110,6 @@ class TestReadTransactionsExcel:
         assert transactions[0]["id"] == 1
         assert transactions[0]["amount"] == 100.0
         assert transactions[0]["category"] == "food"
-
         mock_read_excel.assert_called_once()
 
     @patch("src.transactions_reader.Path")
