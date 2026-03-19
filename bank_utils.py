@@ -5,7 +5,9 @@ import re
 from collections import Counter
 
 
-def process_bank_search(data: List[Dict[str, Any]], search: str) -> List[Dict[str, Any]]:
+def process_bank_search(
+    data: List[Dict[str, Any]], search: str
+) -> List[Dict[str, Any]]:
     """Возвращает транзакции, у которых в поле description встречается строка search.
 
     Args:
@@ -24,7 +26,9 @@ def process_bank_search(data: List[Dict[str, Any]], search: str) -> List[Dict[st
     return result
 
 
-def process_bank_operations(data: List[Dict[str, Any]], categories: List[str]) -> Dict[str, int]:
+def process_bank_operations(
+    data: List[Dict[str, Any]], categories: List[str]
+) -> Dict[str, int]:
     """Подсчитывает количество операций по категориям.
 
     Args:
