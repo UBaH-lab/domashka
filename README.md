@@ -783,6 +783,6 @@ A: Используйте pytest tests/test_main.py::TestFilterByStatus -v дл�
 
 Автор: Ivan
 
-Email: contact@example.com
+Email: ubahyska1992@gmail.com
 
 

@@ -268,6 +268,8 @@ def _filter_by_status_interactive(
         Отфильтрованный список транзакций.
     """
     status = get_valid_status()
+    if status is None:
+        return transactions  # или return [] если нужна пустая фильтрация
     return filter_by_status(transactions, status)
 
 
@@ -357,6 +359,28 @@ def _display_results(transactions: List[Dict[str, Any]]) -> None:
     for i, t in enumerate(transactions[:5], 1):
         print(f"\n--- Транзакция {i} ---")
         print(format_transaction(t))
+
+
+def ask_yes_no(prompt: str) -> bool:
+    """Запрашивает у пользователя ответ да/нет.
+
+    Args:
+        prompt: Текст вопроса
+
+    Returns:
+        True если "да", False если "нет"
+    """
+    yes_answers = ("да", "yes", "y", "д")
+    no_answers = ("нет", "no", "n", "н")
+
+    while True:
+        answer = input(f"{prompt} (да/нет): ").strip().lower()
+        if answer in yes_answers:
+            return True
+        elif answer in no_answers:
+            return False
+        else:
+            print('Введите "да" или "нет"')
 
 
 # =============================================================================
