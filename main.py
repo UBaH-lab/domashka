@@ -164,6 +164,14 @@ def mask_number(number: str) -> str:
 
 def format_transaction(transaction: Dict[str, Any]) -> str:
     """Форматирует транзакцию для вывода в консоль."""
+    # Маппинг валют
+    currency_map = {
+        "RUB": "руб.",
+        "USD": "$",
+        "EUR": "€",
+        "CNY": "¥",
+    }
+
     date = transaction.get("date", "")
     description = transaction.get("description", "")
 
@@ -173,26 +181,43 @@ def format_transaction(transaction: Dict[str, Any]) -> str:
     from_masked = mask_number(from_info) if from_info else ""
     to_masked = mask_number(to_info) if to_info else ""
 
+    # Поддержка двух форматов: operationAmount или amount/currency на верхнем уровне
     amount = ""
     currency = ""
+
+    # Формат 1: operationAmount
     op_amount = transaction.get("operationAmount")
     if op_amount:
         amount = op_amount.get("amount", "")
         curr_info = op_amount.get("currency", {})
         currency = curr_info.get("name", curr_info.get("code", ""))
 
+    # Формат 2: amount/currency на верхнем уровне (если operationAmount нет)
+    if not amount and not currency:
+        amount = transaction.get("amount", "")
+        currency = transaction.get("currency", "")
+
+    # Конвертация кода валюты в символ
+    if currency in currency_map:
+        currency = currency_map[currency]
+
     lines = []
     header = f"{date} {description}" if date and description else date or description
     if header:
         lines.append(header)
 
+    # ИСПРАВЛЕНО: Не добавлять "->" если нет from
     if from_masked and to_masked:
         lines.append(f"{from_masked} -> {to_masked}")
+    elif from_masked:
+        lines.append(from_masked)
     elif to_masked:
-        lines.append(f"-> {to_masked}")
+        lines.append(to_masked)  # Без "->"
 
     if amount and currency:
         lines.append(f"Сумма: {amount} {currency}.")
+
+    return "\n".join(lines)
 
     return "\n".join(lines)
 

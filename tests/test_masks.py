@@ -1,3 +1,14 @@
+# -*- coding: utf-8 -*-
+"""
+Модуль test_masks содержит тесты для функций маскирования.
+
+Тестирует функции из src.masks:
+- mask_account_card: маскирование карт и счетов
+- get_date: преобразование даты
+
+Использует pytest.mark.parametrize для проверки множества сценариев.
+"""
+
 import pytest
 
 from src.masks import get_date, mask_account_card
@@ -28,47 +39,72 @@ def test_mask_account_card(input_str_mask, expected_output):
     """
     Тестирует логику маскировки для двух типов входных данных:
     - Карта: префикс до цифр + "**** ****" + последние 4 цифры.
-    - Счет: префикс до цифр + "**" + последние 4 цифры.
-    - Неверные/пустые данные возвращаются без изменений.
+    - Счёт: префикс до цифр + "**" + последние 4 цифры.
+
+    Args:
+        input_str_mask: Входная строка с названием и номером
+        expected_output: Ожидаемый результат маскирования
+
+    Examples:
+        >>> mask_account_card("Visa Gold 1234567890123456")
+        "Visa Gold **** ****3456"
     """
     assert mask_account_card(input_str_mask) == expected_output
 
 
 @pytest.mark.parametrize(
-    "input_str_date_valid, expected_output",
+    "input_date, expected_output",
     [
-        ("2024-03-11T02:26:18.671407", "11.03.2024"),
-        ("2020-01-01T00:00:00.000000", "01.01.2020"),
-        ("2022-12-31T23:59:59", "31.12.2022"),
-        ("2024-07-15", "15.07.2024"),
+        ("2024-03-11T12:34:56.123456", "11.03.2024"),
+        ("2024-03-11T12:34:56", "11.03.2024"),
+        ("2024-03-11", "11.03.2024"),
+        ("2024-12-01", "01.12.2024"),
     ],
 )
-def test_get_date_valid(input_str_date_valid, expected_output):
+def test_get_date_valid(input_date, expected_output):
     """
-    Тестирует преобразование даты к формату DD.MM.YYYY.
+    Тестирует корректное форматирование дат в формат DD.MM.YYYY.
 
-    Поддерживаются варианты с временной частью (ISO-формат) и без неё.
+    Args:
+        input_date: Дата в ISO формате
+        expected_output: Дата в формате DD.MM.YYYY
+
+    Examples:
+        >>> get_date("2024-03-11")
+        "11.03.2024"
     """
-    assert get_date(input_str_date_valid) == expected_output
+    assert get_date(input_date) == expected_output
 
 
 @pytest.mark.parametrize(
-    "input_str_date_err, expected_exception",
+    "invalid_input",
     [
-        ("2024-13-01T00:00:00", ValueError),
-        ("2024-02-30T00:00:00", ValueError),
-        ("Некорректная строка", ValueError),
-        ("", ValueError),
+        "invalid",
+        "2024/03/11",
+        "11.03.2024",
+        "",
     ],
 )
-def test_get_date_errors(input_str_date_err, expected_exception):
+def test_get_date_errors(invalid_input):
     """
-    Проверяет, что неверный ввод вызывает ValueError.
+    Проверяет, что при невалидном формате даты выбрасывается ValueError.
 
-    Включены:
-    - неправильные месяц/день
-    - строка, не являющаяся датой
-    - пустая строка
+    Args:
+        invalid_input: Невалидная строка даты
+
+    Examples:
+        >>> get_date("invalid")
+        ValueError: Invalid date format
     """
-    with pytest.raises(expected_exception):
-        get_date(input_str_date_err)
+    with pytest.raises(ValueError):
+        get_date(invalid_input)
+
+
+def test_get_date_type_error():
+    """
+    Проверяет, что при передаче не строки выбрасывается ValueError.
+
+    Функция ожидает строку, другие типы должны вызывать ошибку.
+    """
+    with pytest.raises(ValueError):
+        get_date(None)

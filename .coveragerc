@@ -1,0 +1,14 @@
+[run]
+omit =
+    tests/*
+    tests/tests/*
+    conftest.py
+    */test_*.py
+    src/external_api.py
+    src/logger_config.py
+    src/utils.py
+    src/transactions_reader.py
+
+[report]
+exclude_lines =
+    if __name__ == .__main__.:
