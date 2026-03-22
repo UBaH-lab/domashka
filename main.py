@@ -11,11 +11,6 @@
     - Маскировка номеров карт и счетов
     - Подсчет операций по категориям
     - Форматированный вывод результатов
-
-Пример использования:
-    >>> python main.py
-    >>> # Следуйте интерактивным подсказкам программы
-
 """
 
 import ast
@@ -313,6 +308,10 @@ def _load_transactions_by_format(file_format: str) -> List[Dict[str, Any]]:
     """
     print("Программа: Введите название файла:")
     filename = input("Пользователь: ").strip()
+
+    # Автоматически добавляем путь к папке data
+    if not filename.startswith("data/") and not filename.startswith("data\\"):
+        filename = f"data/{filename}"
 
     if file_format == "json":
         return load_transactions_from_json(filename)
