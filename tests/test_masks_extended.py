@@ -11,8 +11,8 @@
 """
 
 import pytest
-from src.masks import mask_account_card, get_date
 
+from src.masks import get_date, mask_account_card
 
 # ============================================================================
 # ТЕСТЫ mask_account_card

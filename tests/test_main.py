@@ -16,17 +16,17 @@
 """
 
 from unittest.mock import patch
+
 from main import (
-    load_transactions_from_json,
+    filter_by_status,
+    format_transaction,
     load_transactions_from_csv,
     load_transactions_from_excel,
-    filter_by_status,
-    sort_by_date,
-    mask_number,
-    format_transaction,
+    load_transactions_from_json,
     main,
+    mask_number,
+    sort_by_date,
 )
-
 
 # ============================================================================
 # ТЕСТЫ ЗАГРУЗКИ ИЗ JSON

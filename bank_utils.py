@@ -1,8 +1,8 @@
 """Утилиты для обработки банковских транзакций."""
 
-from typing import Any, Dict, List
-import re
 from collections import Counter
+import re
+from typing import Any, Dict, List
 
 
 def process_bank_search(

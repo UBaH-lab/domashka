@@ -11,8 +11,8 @@
 """
 
 import pytest
-from src.processing import sort_by_date, filter_by_state, _parse_date
 
+from src.processing import _parse_date, filter_by_state, sort_by_date
 
 # ============================================================================
 # ТЕСТЫ _parse_date

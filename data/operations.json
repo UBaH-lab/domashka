@@ -1,5 +1,77 @@
 [
-  {"id": 1, "amount": 100.0, "currency": "USD"},
-  {"id": 2, "amount": 50.0, "currency": "EUR"},
-  {"id": 3, "amount": 2000.0, "currency": "RUB"}
+  {
+    "id": 1,
+    "state": "EXECUTED",
+    "date": "2024-03-11T12:34:56.123456",
+    "description": "Перевод организации",
+    "from": "Visa Gold 5999414228426353",
+    "to": "Счет 12345678901234567890",
+    "operationAmount": {
+      "amount": "10000",
+      "currency": {
+        "name": "руб.",
+        "code": "RUB"
+      }
+    }
+  },
+  {
+    "id": 2,
+    "state": "EXECUTED",
+    "date": "2024-02-15T10:00:00.000000",
+    "description": "Оплата интернета",
+    "from": "MasterCard 7158300734726758",
+    "to": "Счет 98765432109876543210",
+    "operationAmount": {
+      "amount": "500",
+      "currency": {
+        "name": "руб.",
+        "code": "RUB"
+      }
+    }
+  },
+  {
+    "id": 3,
+    "state": "CANCELED",
+    "date": "2024-01-20T08:15:30.000000",
+    "description": "Снятие наличных",
+    "from": "Maestro 1308795367076174",
+    "to": "",
+    "operationAmount": {
+      "amount": "3000",
+      "currency": {
+        "name": "руб.",
+        "code": "RUB"
+      }
+    }
+  },
+  {
+    "id": 4,
+    "state": "EXECUTED",
+    "date": "2024-04-01T14:20:00.000000",
+    "description": "Перевод с карты на карту",
+    "from": "Visa Platinum 1234567890123456",
+    "to": "MasterCard 9876543210987654",
+    "operationAmount": {
+      "amount": "15000",
+      "currency": {
+        "name": "\\$",
+        "code": "USD"
+      }
+    }
+  },
+  {
+    "id": 5,
+    "state": "EXECUTED",
+    "date": "2024-03-25T09:45:00.000000",
+    "description": "Пополнение счета",
+    "from": "",
+    "to": "Счет 55556666777788889900",
+    "operationAmount": {
+      "amount": "50000",
+      "currency": {
+        "name": "руб.",
+        "code": "RUB"
+      }
+    }
+  }
 ]

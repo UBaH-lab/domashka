@@ -10,11 +10,11 @@
 Использует pytest fixtures для создания тестовых данных.
 """
 
-import pytest
 from datetime import datetime
 
-from src.processing import filter_by_state, sort_by_date, _parse_date
+import pytest
 
+from src.processing import _parse_date, filter_by_state, sort_by_date
 
 # ============================================================================
 # ФИКСТУРЫ

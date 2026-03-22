@@ -18,13 +18,15 @@
 
 """
 
+import ast
 import json
 import logging
-from typing import List, Dict, Any, Optional
+import math
+from typing import Any, Dict, List, Optional
 
+from bank_utils import process_bank_operations, process_bank_search
 from src.masks import get_mask_card_number
 from src.transactions_reader import read_transactions_csv, read_transactions_excel
-from bank_utils import process_bank_search, process_bank_operations
 
 # Настройка логирования с записью в файл
 logging.basicConfig(
@@ -137,34 +139,62 @@ def filter_by_currency(
     """Фильтрует транзакции по валюте."""
     result = []
     for item in data:
-        item_currency = (
-            item.get("operationAmount", {}).get("currency", {}).get("code", "")
-        )
+        item_currency = ""
+
+        # Формат JSON (словарь)
+        op_amount = item.get("operationAmount")
+        if isinstance(op_amount, dict):
+            item_currency = op_amount.get("currency", {}).get("code", "")
+        # Формат CSV/XLSX (строка)
+        elif isinstance(op_amount, str) and op_amount:
+            try:
+                parsed = ast.literal_eval(op_amount)
+                item_currency = parsed.get("currency", {}).get("code", "")
+            except (ValueError, SyntaxError):
+                pass
+
+        # Альтернативный формат
         if not item_currency:
             item_currency = item.get("currency", "")
+
         if item_currency == currency:
             result.append(item)
     return result
 
 
-def mask_number(number: str) -> str:
-    """Маскирует номер карты или счёта для безопасного отображения."""
-    if not number:
+def mask_number(number: Any) -> str:
+    """Маскирует номер карты или счёта."""
+
+    # Обрабатываем None и NaN
+    if number is None:
+        return ""
+
+    if isinstance(number, float):
+        if math.isnan(number):
+            return ""
+        number = str(int(number))
+    elif isinstance(number, int):
+        number = str(number)
+    else:
+        number = str(number).strip()
+
+    if not number or number == "nan" or number == "":
         return ""
 
     digits = "".join(c for c in number if c.isdigit())
 
+    # Маскируем только номера карт (16 цифр) и счетов (>16 цифр)
     if len(digits) == 16:
         return get_mask_card_number(digits)
     elif len(digits) > 16:
         return f"**{digits[-4:]}"
     else:
+        # Короткие номера возвращаем без изменений
         return number
 
 
 def format_transaction(transaction: Dict[str, Any]) -> str:
     """Форматирует транзакцию для вывода в консоль."""
-    # Маппинг валют
     currency_map = {
         "RUB": "руб.",
         "USD": "$",
@@ -175,49 +205,63 @@ def format_transaction(transaction: Dict[str, Any]) -> str:
     date = transaction.get("date", "")
     description = transaction.get("description", "")
 
-    from_info = transaction.get("from", "")
-    to_info = transaction.get("to", "")
+    from_masked = mask_number(transaction.get("from"))
+    to_masked = mask_number(transaction.get("to"))
 
-    from_masked = mask_number(from_info) if from_info else ""
-    to_masked = mask_number(to_info) if to_info else ""
+    # Получаем сумму и валюту
+    amount, currency = _get_amount_and_currency(transaction)
 
-    # Поддержка двух форматов: operationAmount или amount/currency на верхнем уровне
-    amount = ""
-    currency = ""
-
-    # Формат 1: operationAmount
-    op_amount = transaction.get("operationAmount")
-    if op_amount:
-        amount = op_amount.get("amount", "")
-        curr_info = op_amount.get("currency", {})
-        currency = curr_info.get("name", curr_info.get("code", ""))
-
-    # Формат 2: amount/currency на верхнем уровне (если operationAmount нет)
-    if not amount and not currency:
-        amount = transaction.get("amount", "")
-        currency = transaction.get("currency", "")
-
-    # Конвертация кода валюты в символ
     if currency in currency_map:
         currency = currency_map[currency]
 
+    return _build_output_string(
+        date, description, from_masked, to_masked, amount, currency
+    )
+
+
+def _get_amount_and_currency(transaction: Dict[str, Any]) -> tuple:
+    """Извлекает сумму и валюту из транзакции."""
+    op_amount = transaction.get("operationAmount")
+
+    if isinstance(op_amount, dict):
+        return (
+            op_amount.get("amount", ""),
+            op_amount.get("currency", {}).get(
+                "name", op_amount.get("currency", {}).get("code", "")
+            ),
+        )
+    elif isinstance(op_amount, str) and op_amount:
+        try:
+            parsed = ast.literal_eval(op_amount)
+            return (
+                parsed.get("amount", ""),
+                parsed.get("currency", {}).get(
+                    "name", parsed.get("currency", {}).get("code", "")
+                ),
+            )
+        except (ValueError, SyntaxError):
+            pass
+
+    return transaction.get("amount", ""), transaction.get("currency", "")
+
+
+def _build_output_string(date, description, from_masked, to_masked, amount, currency):
+    """Собирает строку для вывода."""
     lines = []
+
     header = f"{date} {description}" if date and description else date or description
     if header:
         lines.append(header)
 
-    # ИСПРАВЛЕНО: Не добавлять "->" если нет from
     if from_masked and to_masked:
         lines.append(f"{from_masked} -> {to_masked}")
     elif from_masked:
         lines.append(from_masked)
     elif to_masked:
-        lines.append(to_masked)  # Без "->"
+        lines.append(to_masked)
 
     if amount and currency:
         lines.append(f"Сумма: {amount} {currency}.")
-
-    return "\n".join(lines)
 
     return "\n".join(lines)
 
