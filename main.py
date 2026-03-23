@@ -116,18 +116,24 @@ def sort_by_date(
 ) -> List[Dict[str, Any]]:
     """Сортирует транзакции по дате."""
 
-    def parse_date(date_str: str) -> tuple:
+    def parse_date(date_str: Any) -> tuple:
+        if date_str is None:
+            return (0, 0, 0)
         try:
-            parts = date_str.split(".")
+            # Поддержка формата ISO (YYYY-MM-DDTHH:MM:SS)
+            if "T" in str(date_str):
+                parts = str(date_str).split("T")[0].split("-")
+                if len(parts) == 3:
+                    return (int(parts[0]), int(parts[1]), int(parts[2]))
+            # Формат DD.MM.YYYY
+            parts = str(date_str).split(".")
             if len(parts) == 3:
                 return (int(parts[2]), int(parts[1]), int(parts[0]))
         except (ValueError, AttributeError):
             pass
         return (0, 0, 0)
 
-    return sorted(
-        data, key=lambda x: parse_date(x.get("date", "")), reverse=not ascending
-    )
+    return sorted(data, key=lambda x: parse_date(x.get("date")), reverse=not ascending)
 
 
 def filter_by_currency(
@@ -152,7 +158,8 @@ def filter_by_currency(
 
         # Альтернативный формат
         if not item_currency:
-            item_currency = item.get("currency", "")
+            # ПРАВКА 2: поиск в currency, currency_code
+            item_currency = item.get("currency", item.get("currency_code", ""))
 
         if item_currency == currency:
             result.append(item)
@@ -314,6 +321,12 @@ def _load_transactions_by_format(file_format: str) -> List[Dict[str, Any]]:
     # Автоматически добавляем путь к папке data
     if not filename.startswith("data/") and not filename.startswith("data\\"):
         filename = f"data/{filename}"
+
+    # Автоматически добавляем расширение
+    extensions = {"json": ".json", "csv": ".csv", "xlsx": ".xlsx"}
+    ext = extensions.get(file_format, "")
+    if ext and not filename.lower().endswith(ext):
+        filename = f"{filename}{ext}"
 
     if file_format == "json":
         return load_transactions_from_json(filename)
