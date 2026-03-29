@@ -58,8 +58,8 @@ Thumbs.db
 .debug.log
 
 # Project specific (если файлы с данными не должны быть в репозитории)
-transactions.csv
-transactions_excel.xlsx
+data/transactions.csv
+data/transactions_excel.xlsx
 *.xlsx
 *.csv
 !tests/data/*.csv

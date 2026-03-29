@@ -351,8 +351,6 @@ def _filter_by_status_interactive(
         Отфильтрованный список транзакций.
     """
     status = get_valid_status()
-    if status is None:
-        return transactions  # или return [] если нужна пустая фильтрация
     return filter_by_status(transactions, status)
 
 
@@ -407,7 +405,7 @@ def _search_by_keywords(transactions: List[Dict[str, Any]]) -> None:
     results = process_bank_search(transactions, keyword)
     print(f"Программа: Найдено {len(results)} транзакций по запросу '{keyword}':")
 
-    for t in results[:5]:
+    for t in results:
         print(format_transaction(t))
         print()
 
@@ -439,7 +437,7 @@ def _display_results(transactions: List[Dict[str, Any]]) -> None:
     print(f"Программа: Всего транзакций: {len(transactions)}")
     print("Программа: Вывод первых 5 транзакций:")
 
-    for i, t in enumerate(transactions[:5], 1):
+    for i, t in enumerate(transactions, 1):
         print(f"\n--- Транзакция {i} ---")
         print(format_transaction(t))
 

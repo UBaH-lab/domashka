@@ -1,4 +1,15 @@
-"""Модуль для чтения финансовых транзакций из CSV и Excel файлов."""
+"""Модуль для чтения финансовых транзакций из файлов разных форматов.
+
+Поддерживаемые форматы:
+    - CSV (разделитель ';')
+    - XLSX (Excel)
+
+Пример использования:
+    from src.transactions_reader import read_transactions_csv, read_transactions_excel
+
+    data_csv = read_transactions_csv('data/transactions.csv')
+    data_xlsx = read_transactions_excel('data/transactions.xlsx')
+"""
 
 from pathlib import Path
 from typing import Any, Dict, List, Union
@@ -7,90 +18,78 @@ import pandas as pd
 
 
 def read_transactions_csv(file_path: Union[str, Path]) -> List[Dict[str, Any]]:
-    """Считывает финансовые транзакции из CSV-файла.
+    """Читает транзакции из CSV-файла.
 
     Args:
-        file_path (Union[str, Path]): Путь к CSV-файлу.
+        file_path: Путь к CSV-файлу (разделитель ';').
 
     Returns:
-        List[Dict[str, Any]]: Список записей транзакций, где каждая запись — словарь.
+        Список словарей с транзакциями.
 
     Raises:
-        FileNotFoundError: Если файл не существует.
-        ValueError: Если файл пустой или имеет неверный формат.
+        FileNotFoundError: Если файл не найден.
+        ValueError: Если файл пустой или повреждён.
     """
     path = Path(file_path)
 
     if not path.exists():
         raise FileNotFoundError(f"Файл {file_path} не найден")
 
-    try:
-        df = pd.read_csv(path)
+    df = pd.read_csv(path, sep=";")
 
-        if df.empty:
-            raise ValueError("Файл пустой")
+    if df.empty:
+        raise ValueError("CSV-файл пустой")
 
-        transactions = df.to_dict("records")
-
-        return transactions
-
-    except pd.errors.EmptyDataError:
-        raise ValueError("Файл пустой или имеет неверный формат")
-    except Exception as e:
-        raise ValueError(f"Ошибка при чтении CSV-файла: {e}")
+    df = df.fillna("")
+    return df.to_dict("records")
 
 
 def read_transactions_excel(file_path: Union[str, Path]) -> List[Dict[str, Any]]:
-    """Считывает финансовые транзакции из XLSX-файла.
+    """Читает транзакции из Excel-файла (XLSX).
 
     Args:
-        file_path (Union[str, Path]): Путь к XLSX-файлу.
+        file_path: Путь к XLSX-файлу.
 
     Returns:
-        List[Dict[str, Any]]: Список записей транзакций, где каждая запись — словарь.
+        Список словарей с транзакциями.
 
     Raises:
-        FileNotFoundError: Если файл не существует.
-        ValueError: Если файл пустой или имеет неверный формат.
+        FileNotFoundError: Если файл не найден.
+        ValueError: Если файл пустой или повреждён.
     """
     path = Path(file_path)
 
     if not path.exists():
         raise FileNotFoundError(f"Файл {file_path} не найден")
 
-    try:
-        df = pd.read_excel(path)
+    df = pd.read_excel(path)
 
-        if df.empty:
-            raise ValueError("Файл пустой")
+    if df.empty:
+        raise ValueError("XLSX-файл пустой")
 
-        transactions = df.to_dict("records")
-
-        return transactions
-
-    except Exception as e:
-        raise ValueError(f"Ошибка при чтении XLSX-файла: {e}")
+    df = df.fillna("")
+    return df.to_dict("records")
 
 
 def read_transactions(file_path: Union[str, Path]) -> List[Dict[str, Any]]:
-    """Универсальная функция для чтения транзакций из файла.
-    Автоматически определяет формат по расширению файла.
+    """Автоматически определяет формат и читает транзакции.
 
     Args:
-        file_path (Union[str, Path]): Путь к файлу (CSV или XLSX).
+        file_path: Путь к файлу (CSV или XLSX).
 
     Returns:
-        List[Dict[str, Any]]: Список записей транзакций.
+        Список словарей с транзакциями.
 
     Raises:
-        ValueError: Если формат файла не поддерживается.
+        FileNotFoundError: Если файл не найден.
+        ValueError: Если формат не поддерживается.
     """
     path = Path(file_path)
-    extension = path.suffix.lower()
+    ext = path.suffix.lower()
 
-    if extension == ".csv":
+    if ext == ".csv":
         return read_transactions_csv(path)
-    elif extension in [".xlsx", ".xls"]:
+    elif ext in [".xlsx", ".xls"]:
         return read_transactions_excel(path)
     else:
-        raise ValueError(f"Неподдерживаемый формат файла: {extension}")
+        raise ValueError(f"Неподдерживаемый формат файла: {ext}")
