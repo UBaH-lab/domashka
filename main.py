@@ -88,7 +88,8 @@ def load_transactions_from_excel(file_path: str) -> List[Dict[str, Any]]:
         return []
 
 
-def get_valid_status() -> Optional[str]:
+def get_valid_status() -> str:
+    """Запрашивает у пользователя статус транзакции с валидацией."""
     """Запрашивает у пользователя статус транзакции с валидацией."""
     while True:
         print("Программа: Введите статус, по которому необходимо выполнить фильтрацию.")
